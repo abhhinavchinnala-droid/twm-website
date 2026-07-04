@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Events — The Warangal Margam</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="twm-base.css" />
+<style>
+.ev-section{ padding:56px 0 16px; }
+.ev-section:last-of-type{ padding-bottom:80px; }
+.ev-section-hed{ font-family:'DM Serif Display',serif; font-size:26px; color:#fff; margin-bottom:6px; }
+.ev-section-hed em{ font-style:italic; color:var(--gold-light); }
+.ev-section-sub{ font-size:14px; color:rgba(255,255,255,0.4); margin-bottom:30px; }
+.ev-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.ev-card{ display:flex; flex-direction:column; text-align:left; background:var(--surface); border:1px solid var(--border-mid); border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; transition:transform .3s cubic-bezier(.34,1.4,.64,1),border-color .3s; }
+.ev-card:hover{ transform:translateY(-4px); border-color:rgba(212,160,66,0.4); }
+.ev-banner{ aspect-ratio:16/10; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.ev-banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.ev-ph{ font-family:'DM Serif Display',serif; font-style:italic; font-size:60px; color:rgba(255,255,255,0.14); }
+.ev-tag{ position:absolute; top:12px; left:12px; z-index:2; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; background:rgba(155,58,30,0.92); color:#fff; padding:5px 10px; border-radius:30px; }
+.ev-body{ padding:18px 20px 22px; flex:1; display:flex; flex-direction:column; }
+.ev-name{ font-family:'DM Serif Display',serif; font-size:19px; color:#fff; line-height:1.2; margin-bottom:9px; }
+.ev-meta{ font-size:12px; letter-spacing:.3px; color:rgba(255,255,255,0.5); margin-bottom:12px; line-height:1.6; }
+.ev-desc{ font-size:13.5px; color:rgba(255,255,255,0.55); font-weight:300; line-height:1.6; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.ev-foot{ margin-top:auto; padding-top:14px; }
+.ev-link{ font-size:12.5px; color:var(--gold-light); }
+
+/* modal */
+.ev-modal{ position:fixed; inset:0; z-index:300; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(6,5,4,0.72); backdrop-filter:blur(7px); opacity:0; pointer-events:none; transition:opacity .25s; }
+.ev-modal.open{ opacity:1; pointer-events:auto; }
+.ev-modal-card{ width:min(640px,100%); max-height:88vh; overflow-y:auto; background:#100d0a; border:1px solid var(--border-mid); border-radius:14px; position:relative; }
+.ev-modal-close{ position:absolute; top:14px; right:14px; z-index:3; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.15); color:#fff; font-size:15px; cursor:pointer; }
+.ev-modal-banner{ aspect-ratio:16/8; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.ev-modal-banner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.ev-modal-body{ padding:26px 28px 30px; }
+.ev-modal-title{ font-family:'DM Serif Display',serif; font-size:28px; color:#fff; line-height:1.15; margin-bottom:12px; }
+.ev-modal-meta{ display:flex; flex-wrap:wrap; gap:8px 18px; font-size:13px; color:rgba(255,255,255,0.55); margin-bottom:18px; }
+.ev-modal-meta b{ color:var(--gold-light); font-weight:500; }
+.ev-modal-summary{ font-size:14.5px; line-height:1.75; color:rgba(255,255,255,0.7); font-weight:300; white-space:pre-wrap; }
+.ev-modal-photos{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:20px; }
+.ev-modal-photos img{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; cursor:pointer; }
+.ev-res{ margin-top:20px; display:flex; flex-direction:column; gap:8px; }
+.ev-res a{ font-size:13px; color:var(--gold-light); border:1px solid var(--border-mid); padding:9px 14px; border-radius:6px; transition:.15s; }
+.ev-res a:hover{ border-color:rgba(212,160,66,0.5); }
+.ev-reg{ margin-top:20px; }
+@media (max-width:860px){ .ev-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-wordmark">TWM<span class="nav-wordmark-dot">.</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item"><a href="index.html" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M1.5 7L8 1.5 14.5 7V14H10.5V10H5.5V14H1.5Z"/></svg></span>Home</a></li>
+      <li class="nav-item"><a href="twm-members.html#origin" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5L10 10"/></svg></span>Origin</a></li>
+      <li class="nav-item"><a href="twm-members.html#members" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="5.5" cy="5" r="2.5"/><circle cx="11" cy="5" r="2"/><path d="M1 13.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><path d="M11 10c1.5 0 3 1 3 3.5"/></svg></span>Members</a></li>
+      <li class="nav-item"><a href="twm-members.html#community-members" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M13.5 10.5a2 2 0 0 1-2 2H5L2 14.5V4a2 2 0 0 1 2-2h7.5a2 2 0 0 1 2 2z"/></svg></span>Community</a></li>
+      <li class="nav-item"><a href="events.html" class="nav-link active"><span class="nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5 1.5v3M11 1.5v3"/></svg></span>Events</a></li>
+      <li class="nav-item"><a href="gallery.html" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5"/><circle cx="5.8" cy="6.6" r="1.2"/><path d="M2.5 11l3.3-3 2.7 2.3L11 8l2.6 2.6"/></svg></span>Gallery</a></li>
+      <li class="nav-item"><a href="twm-members.html#connect" class="nav-link nav-join"><span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 1.5v9M4.5 7L8 10.5 11.5 7"/><path d="M2 12.5h12"/></svg></span>Connect</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="page-hd">
+  <div class="w">
+    <span class="eyebrow">Gatherings</span>
+    <h1 class="page-title">Events &amp; <em>sessions.</em></h1>
+    <p class="page-sub">What The Warangal Margam is running next, and a record of what we have already held.</p>
+  </div>
+</header>
+
+<section class="ev-section" id="upcoming">
+  <div class="w">
+    <h2 class="ev-section-hed">Upcoming <em>events.</em></h2>
+    <p class="ev-section-sub">Open sessions you can join.</p>
+    <div class="ev-grid" id="upGrid"></div>
+    <p class="cms-empty" id="upEmpty" style="display:none">No upcoming events scheduled. Add one in Sanity Studio (Upcoming Events).</p>
+  </div>
+</section>
+
+<section class="ev-section" id="past">
+  <div class="w">
+    <h2 class="ev-section-hed">Previous <em>sessions.</em></h2>
+    <p class="ev-section-sub">Click any session for the full summary, photos, and resources.</p>
+    <div class="ev-grid" id="pastGrid"></div>
+    <p class="cms-empty" id="pastEmpty" style="display:none">Past sessions added in Sanity Studio will appear here.</p>
+  </div>
+</section>
+
+<footer class="home-foot">
+  <div class="w foot-in">
+    <div class="footer-brand">TWM<em>.</em></div>
+    <div class="footer-copy">The Warangal Margam &middot; Margam, Office No. 403, Gokul Plaza, Hanamkonda</div>
+  </div>
+</footer>
+
+<!-- detail modal -->
+<div class="ev-modal" id="evModal">
+  <div class="ev-modal-card">
+    <button class="ev-modal-close" id="evModalClose">&#10005;</button>
+    <div class="ev-modal-banner" id="evModalBanner"></div>
+    <div class="ev-modal-body">
+      <div class="ev-modal-title" id="evModalTitle"></div>
+      <div class="ev-modal-meta" id="evModalMeta"></div>
+      <div class="ev-modal-summary" id="evModalSummary"></div>
+      <div class="ev-modal-photos" id="evModalPhotos"></div>
+      <div class="ev-res" id="evModalRes"></div>
+      <div class="ev-reg" id="evModalReg"></div>
+    </div>
+  </div>
+</div>
+<div class="lightbox" id="lightbox"><button class="lb-close" id="lbClose">&#10005;</button><img id="lbImg" alt=""><div class="lb-cap" id="lbCap"></div></div>
+
+<script src="sanity.js"></script>
+<script src="nav.js"></script>
+<script>
+(function(){
+  const esc=TWM.esc;
+  const fmt=d=>{ if(!d) return ''; try{ return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return d; } };
+
+  // lightbox for session photos
+  const lb=document.getElementById('lightbox'), lbImg=document.getElementById('lbImg');
+  function openLB(s){ lbImg.src=s; lb.classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeLB(){ lb.classList.remove('open'); lbImg.removeAttribute('src'); if(!evModal.classList.contains('open')) document.body.style.overflow=''; }
+  document.getElementById('lbClose').addEventListener('click',closeLB);
+  lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+
+  // detail modal
+  const evModal=document.getElementById('evModal');
+  const elBanner=document.getElementById('evModalBanner'), elTitle=document.getElementById('evModalTitle');
+  const elMeta=document.getElementById('evModalMeta'), elSum=document.getElementById('evModalSummary');
+  const elPhotos=document.getElementById('evModalPhotos'), elRes=document.getElementById('evModalRes'), elReg=document.getElementById('evModalReg');
+  function openModal(e){
+    elBanner.innerHTML = e.banner ? `<img src="${esc(TWM.img(e.banner,900,460))}" alt="">` : `<span class="ev-ph">${esc((String(e.title||'?')[0]))}</span>`;
+    elTitle.textContent=e.title||'';
+    const meta=[]; if(e.date) meta.push(`<span><b>Date</b> ${esc(fmt(e.date))}</span>`);
+    if(e.time) meta.push(`<span><b>Time</b> ${esc(e.time)}</span>`);
+    if(e.venue) meta.push(`<span><b>Venue</b> ${esc(e.venue)}</span>`);
+    if(e.speaker) meta.push(`<span><b>Speaker</b> ${esc(e.speaker)}</span>`);
+    elMeta.innerHTML=meta.join('');
+    elSum.textContent=e.summary||e.description||'';
+    elPhotos.innerHTML=(e.images||[]).map(u=>`<img src="${esc(TWM.img(u,400,400))}" data-full="${esc(TWM.img(u,1600))}" alt="">`).join('');
+    elPhotos.querySelectorAll('img').forEach(im=>im.addEventListener('click',()=>openLB(im.dataset.full)));
+    elRes.innerHTML=(e.resources||[]).map(r=>`<a href="${esc(r.url||'#')}" target="_blank" rel="noopener">${esc(r.label||r.url||'Resource')} &rarr;</a>`).join('');
+    elReg.innerHTML=e.registrationLink ? `<a class="btn-primary" href="${esc(e.registrationLink)}" target="_blank" rel="noopener">Register</a>` : '';
+    evModal.classList.add('open'); document.body.style.overflow='hidden';
+  }
+  function closeModal(){ evModal.classList.remove('open'); document.body.style.overflow=''; }
+  document.getElementById('evModalClose').addEventListener('click',closeModal);
+  evModal.addEventListener('click',e=>{ if(e.target===evModal) closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeLB(); } });
+
+  function card(e,i,upcoming){
+    const ban = e.banner ? `<img src="${esc(TWM.img(e.banner,700,440))}" alt="${esc(e.title)}">` : `<span class="ev-ph">${esc((String(e.title||'?')[0]))}</span>`;
+    const meta=[fmt(e.date),e.time,e.venue].filter(Boolean).map(esc).join(' &middot; ');
+    const tag = upcoming ? '<span class="ev-tag">Upcoming</span>' : '';
+    const desc = e.description||e.summary||'';
+    return `<div class="ev-card pal${i%6}" data-i="${i}" data-kind="${upcoming?'up':'past'}">
+      <div class="ev-banner">${tag}${ban}</div>
+      <div class="ev-body">
+        <div class="ev-name">${esc(e.title)}</div>
+        <div class="ev-meta">${meta}</div>
+        ${desc?`<div class="ev-desc">${esc(desc)}</div>`:''}
+        <div class="ev-foot"><span class="ev-link">View details &rarr;</span></div>
+      </div></div>`;
+  }
+
+  let UP=[], PAST=[];
+  function bind(grid, arr){
+    grid.querySelectorAll('.ev-card').forEach(c=>c.addEventListener('click',()=>openModal(arr[+c.dataset.i])));
+  }
+
+  (async()=>{
+    // Upcoming
+    const uq=`*[_type=="event"]|order(date asc){ title, date, time, venue, description, registrationLink, "banner":banner.asset->url }`;
+    const ud=await TWM.fetch(uq);
+    UP = (Array.isArray(ud)&&ud.length) ? ud : [
+      { title:'AI & Career Growth Workshop', date:'2026-07-05', time:'5:00 PM', venue:'Warangal', description:'A hands-on workshop on using AI tools for careers, study, and building products. Open to students and professionals.', registrationLink:'' }
+    ];
+    const upGrid=document.getElementById('upGrid');
+    upGrid.innerHTML=UP.map((e,i)=>card(e,i,true)).join(''); bind(upGrid,UP);
+    if(!(Array.isArray(ud)&&ud.length)) document.getElementById('upEmpty').style.display='';
+
+    // Past sessions
+    const pq=`*[_type=="pastSession"]|order(date desc){ title, date, time, venue, speaker, summary, "banner":images[0].asset->url, "images":images[].asset->url, resources }`;
+    const pd=await TWM.fetch(pq);
+    PAST = (Array.isArray(pd)&&pd.length) ? pd : [
+      { title:'Founders Roundtable', date:'2026-05-20', time:'6:30 PM', venue:'Hanamkonda', speaker:'TWM core', summary:'A closed-door conversation among Warangal founders on hiring, fundraising, and staying consistent. Members shared what is working and where they are stuck.', images:[], resources:[] },
+      { title:'Build-in-Public Night', date:'2026-04-28', time:'6:00 PM', venue:'Warangal', speaker:'Community', summary:'Members demoed what they are building and got live feedback from the room.', images:[], resources:[] }
+    ];
+    const pastGrid=document.getElementById('pastGrid');
+    pastGrid.innerHTML=PAST.map((e,i)=>card(e,i,false)).join(''); bind(pastGrid,PAST);
+    if(!(Array.isArray(pd)&&pd.length)) document.getElementById('pastEmpty').style.display='';
+  })();
+})();
+</script>
+</body>
+</html>

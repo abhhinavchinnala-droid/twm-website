@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gallery — The Warangal Margam</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="twm-base.css" />
+<style>
+.gal-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:48px 0 80px; }
+.gal-tile{ position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; background:var(--surface-2); cursor:pointer; }
+.gal-tile img{ width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.25,.46,.45,.94); }
+.gal-tile:hover img{ transform:scale(1.07); }
+.gal-cap{ position:absolute; left:0; right:0; bottom:0; padding:24px 12px 10px; font-size:11px; color:#fff;
+  background:linear-gradient(to top,rgba(12,10,7,0.9),transparent); opacity:0; transition:opacity .3s; }
+.gal-tile:hover .gal-cap{ opacity:1; }
+.gal-tile.ph{ display:flex; align-items:center; justify-content:center; cursor:default; }
+.gal-tile.ph span{ font-size:12px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.45); }
+.filters{ display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+.chip{ font-size:12px; letter-spacing:.5px; color:rgba(255,255,255,0.55); border:1px solid var(--border-mid);
+  padding:7px 15px; border-radius:30px; cursor:pointer; transition:.18s; background:transparent; }
+.chip:hover{ color:#fff; border-color:rgba(255,255,255,0.3); }
+.chip.active{ background:var(--rust); border-color:var(--rust); color:#fff; }
+@media (max-width:860px){ .gal-grid{ grid-template-columns:repeat(3,1fr); } }
+@media (max-width:560px){ .gal-grid{ grid-template-columns:repeat(2,1fr); gap:8px; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-wordmark">TWM<span class="nav-wordmark-dot">.</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-item"><a href="index.html" class="nav-link" data-tip="Home"><span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M1.5 7L8 1.5 14.5 7V14H10.5V10H5.5V14H1.5Z"/></svg></span>Home</a></li>
+      <li class="nav-item"><a href="twm-members.html#origin" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5L10 10"/></svg></span>Origin</a></li>
+      <li class="nav-item"><a href="twm-members.html#members" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="5.5" cy="5" r="2.5"/><circle cx="11" cy="5" r="2"/><path d="M1 13.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><path d="M11 10c1.5 0 3 1 3 3.5"/></svg></span>Members</a></li>
+      <li class="nav-item"><a href="twm-members.html#community-members" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M13.5 10.5a2 2 0 0 1-2 2H5L2 14.5V4a2 2 0 0 1 2-2h7.5a2 2 0 0 1 2 2z"/></svg></span>Community</a></li>
+      <li class="nav-item"><a href="events.html" class="nav-link"><span class="nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5 1.5v3M11 1.5v3"/></svg></span>Events</a></li>
+      <li class="nav-item"><a href="gallery.html" class="nav-link active"><span class="nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5"/><circle cx="5.8" cy="6.6" r="1.2"/><path d="M2.5 11l3.3-3 2.7 2.3L11 8l2.6 2.6"/></svg></span>Gallery</a></li>
+      <li class="nav-item"><a href="twm-members.html#connect" class="nav-link nav-join"><span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 1.5v9M4.5 7L8 10.5 11.5 7"/><path d="M2 12.5h12"/></svg></span>Connect</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="page-hd">
+  <div class="w">
+    <span class="eyebrow">Moments</span>
+    <h1 class="page-title">The <em>gallery.</em></h1>
+    <p class="page-sub">Snapshots from TWM events, sessions, and community gatherings across Warangal.</p>
+    <div class="filters" id="filters"></div>
+  </div>
+</header>
+
+<section>
+  <div class="w">
+    <div class="gal-grid" id="galGrid"></div>
+    <p class="cms-empty" id="galEmpty" style="display:none">Upload images in Sanity Studio (Gallery) and they'll appear here automatically.</p>
+  </div>
+</section>
+
+<footer class="home-foot">
+  <div class="w foot-in">
+    <div class="footer-brand">TWM<em>.</em></div>
+    <div class="footer-copy">The Warangal Margam &middot; Margam, Office No. 403, Gokul Plaza, Hanamkonda</div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox"><button class="lb-close" id="lbClose">&#10005;</button><img id="lbImg" alt=""><div class="lb-cap" id="lbCap"></div></div>
+
+<script src="sanity.js"></script>
+<script src="nav.js"></script>
+<script>
+(function(){
+  const esc=TWM.esc;
+  const grid=document.getElementById('galGrid');
+  const lb=document.getElementById('lightbox'), lbImg=document.getElementById('lbImg'), lbCap=document.getElementById('lbCap');
+  function openLB(s,c){ lbImg.src=s; lbCap.textContent=c||''; lb.classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeLB(){ lb.classList.remove('open'); document.body.style.overflow=''; lbImg.removeAttribute('src'); }
+  document.getElementById('lbClose').addEventListener('click',closeLB);
+  lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLB(); });
+
+  function tile(g){
+    return `<div class="gal-tile" data-cat="${esc(g.category||'')}">
+      <img src="${esc(TWM.img(g.url,600,600))}" data-full="${esc(TWM.img(g.url,1600))}" alt="${esc(g.caption||'')}" loading="lazy">
+      ${g.caption?`<div class="gal-cap">${esc(g.caption)}</div>`:''}</div>`;
+  }
+  function bind(){ grid.querySelectorAll('.gal-tile img').forEach(im=>im.addEventListener('click',()=>openLB(im.dataset.full, im.closest('.gal-tile').querySelector('.gal-cap')?.textContent||''))); }
+
+  (async()=>{
+    const q=`*[_type=="galleryImage"]|order(order asc, eventDate desc){ "url":image.asset->url, caption, category }`;
+    const data=await TWM.fetch(q);
+    if(Array.isArray(data)&&data.length){
+      grid.innerHTML=data.map(tile).join(''); bind();
+      // category filter
+      const cats=[...new Set(data.map(g=>g.category).filter(Boolean))];
+      if(cats.length){
+        const f=document.getElementById('filters');
+        f.innerHTML=['All',...cats].map((c,i)=>`<button class="chip${i===0?' active':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+        f.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+          f.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); ch.classList.add('active');
+          const c=ch.dataset.c;
+          grid.querySelectorAll('.gal-tile').forEach(t=>{ t.style.display=(c==='All'||t.dataset.cat===c)?'':'none'; });
+        }));
+      }
+    } else {
+      const labels=['Workshop','Meetup','Session','Panel','Social','Talk','Demo','Mixer','Launch','Hangout','Pitch','Class'];
+      grid.innerHTML=labels.map((l,i)=>`<div class="gal-tile ph pal${i%6}"><span>${l}</span></div>`).join('');
+      document.getElementById('galEmpty').style.display='';
+    }
+  })();
+})();
+</script>
+</body>
+</html>
